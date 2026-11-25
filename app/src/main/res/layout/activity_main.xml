@@ -1,180 +1,211 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:fitsSystemWindows="true"
     tools:context=".ui.MainActivity">
 
+    <!-- Estructura del diseño -->
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <TextView
-            android:layout_width="0dp"
+        <!-- Encabezado: título + BTN Salir -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="MyWallet - Mis Gastos"
-            android:textSize="22sp"
-            android:textStyle="bold" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-        <Button
-            android:id="@+id/btnLogout"
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/titulo_main"
+                android:textSize="@dimen/texto_subtitulo"
+                android:textStyle="bold"/>
+
+            <!-- BTN Cerrar Sesión -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnLogout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_salir"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/gris"/>
+        </LinearLayout>
+
+        <!-- Usuario conectado -->
+        <TextView
+            android:id="@+id/tvUsuario"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="#607D8B"
-            android:text="Salir" />
-    </LinearLayout>
+            android:textSize="@dimen/texto_pequeno"
+            android:layout_marginBottom="8dp"
+            tools:text="Conectado como: correo@ejemplo.cl"/>
 
-    <TextView
-        android:id="@+id/tvUsuario"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:text="Conectado como:"
-        android:textSize="12sp" />
-
-    <EditText
-        android:id="@+id/etGastoId"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="ID del Gasto (Ej: G001)"
-        android:inputType="text"
-        android:layout_marginBottom="4dp"/>
-
-    <EditText
-        android:id="@+id/etDescripcion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Descripción (Ej: Almuerzo)"
-        android:inputType="textCapSentences"
-        android:layout_marginBottom="4dp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="4">
+        <!-- Formulario del Gasto -->
+        <EditText
+            android:id="@+id/etGastoId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_id"
+            android:inputType="text"/>
 
         <EditText
-            android:id="@+id/etMonto"
-            android:layout_width="0dp"
+            android:id="@+id/etDescripcion"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:hint="Monto ($)"
-            android:inputType="number"
-            android:maxLength="9"
-            android:layout_marginEnd="4dp"/>
+            android:hint="@string/hint_descripcion"
+            android:inputType="textCapSentences"/>
 
-        <EditText
-            android:id="@+id/etFecha"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:focusable="false"
-            android:hint="Fecha"
-            android:inputType="none"
-            android:layout_marginStart="4dp"/>
+            android:orientation="horizontal"
+            android:weightSum="4">
+
+            <EditText
+                android:id="@+id/etMonto"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:hint="@string/hint_monto"
+                android:inputType="number"
+                android:maxLength="9"
+                android:layout_marginEnd="4dp"/>
+
+            <!-- Fecha: al tocarla se abre un calendario -->
+            <EditText
+                android:id="@+id/etFecha"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:focusable="false"
+                android:hint="@string/hint_fecha"
+                android:inputType="none"
+                android:layout_marginStart="4dp"/>
+        </LinearLayout>
+
+        <!-- Spinners: Categoría y Método de pago -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="4"
+            android:layout_marginBottom="8dp">
+
+            <Spinner
+                android:id="@+id/spCategoria"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="2"
+                android:layout_marginEnd="4dp"/>
+
+            <Spinner
+                android:id="@+id/spMetodoPago"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="2"
+                android:layout_marginStart="4dp"/>
+        </LinearLayout>
+
+        <!-- BTN Guardar y Buscar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="4">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnCreate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/btn_guardar"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/purple_500"
+                android:layout_marginEnd="4dp"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnRead"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/btn_buscar"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/verde"
+                android:layout_marginStart="4dp"/>
+        </LinearLayout>
+
+        <!-- BTN Actualizar y Eliminar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="4"
+            android:layout_marginTop="8dp">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnUpdate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/btn_actualizar"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/naranjo"
+                android:layout_marginEnd="4dp"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnDelete"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/btn_eliminar"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/rojo"
+                android:layout_marginStart="4dp"/>
+        </LinearLayout>
+
+        <!-- Total gastado -->
+        <TextView
+            android:id="@+id/tvTotal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:padding="8dp"
+            android:background="@color/fondo_total"
+            android:textColor="@color/black"
+            android:textSize="@dimen/texto_normal"
+            android:textStyle="bold"
+            tools:text="Total gastado: $45.990 (5 registros)"/>
+
+        <!-- Lista de gastos -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/titulo_lista"
+            android:textSize="@dimen/texto_pequeno"
+            android:textStyle="bold"/>
+
+        <ListView
+            android:id="@+id/lvGastos"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="4"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="8dp">
-
-        <Spinner
-            android:id="@+id/spCategoria"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="2"
-            android:layout_marginEnd="4dp"/>
-
-        <Spinner
-            android:id="@+id/spMetodoPago"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="2"
-            android:layout_marginStart="4dp"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="4">
-
-        <Button
-            android:id="@+id/btnCreate"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="Guardar"
-            android:layout_marginEnd="4dp"/>
-
-        <Button
-            android:id="@+id/btnRead"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="Buscar"
-            android:backgroundTint="#4CAF50"
-            android:layout_marginStart="4dp"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="4">
-
-        <Button
-            android:id="@+id/btnUpdate"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="Actualizar"
-            android:backgroundTint="#FF9800"
-            android:layout_marginEnd="4dp"/>
-
-        <Button
-            android:id="@+id/btnDelete"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="Eliminar"
-            android:backgroundTint="#F44336"
-            android:layout_marginStart="4dp"/>
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/tvTotal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:background="#E3F2FD"
-        android:padding="8dp"
-        android:text="Total gastado: $0 (0 registros)"
-        android:textStyle="bold" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Mis gastos (toca uno para editarlo)"
-        android:textStyle="bold" />
-
-    <ListView
-        android:id="@+id/lvGastos"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
 
 </LinearLayout>

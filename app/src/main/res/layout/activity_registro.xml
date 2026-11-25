@@ -1,63 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:gravity="center_vertical"
     android:orientation="vertical"
-    android:padding="24dp"
+    android:fitsSystemWindows="true"
     tools:context=".ui.RegistroActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Crear Cuenta"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="24dp"/>
+    <!-- Estructura del diseño -->
 
-    <EditText
-        android:id="@+id/etEmail"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Correo electrónico"
-        android:inputType="textEmailAddress"
-        android:layout_marginBottom="8dp"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="24dp">
 
-    <EditText
-        android:id="@+id/etPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Contraseña (mínimo 6 caracteres)"
-        android:inputType="textPassword"
-        android:layout_marginBottom="8dp"/>
+        <!-- Título -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/titulo_registro"
+            android:textSize="@dimen/texto_titulo"
+            android:textStyle="bold"
+            android:layout_marginBottom="24dp"/>
 
-    <EditText
-        android:id="@+id/etConfirmarPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Confirmar contraseña"
-        android:inputType="textPassword"
-        android:layout_marginBottom="24dp"/>
+        <!-- Correo -->
+        <EditText
+            android:id="@+id/etEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_email"
+            android:inputType="textEmailAddress"
+            android:layout_marginBottom="8dp"/>
 
-    <Button
-        android:id="@+id/btnRegistrar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Registrarse"
-        android:backgroundTint="#4CAF50"/>
+        <!-- Contraseña -->
+        <EditText
+            android:id="@+id/etPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_password_registro"
+            android:inputType="textPassword"
+            android:layout_marginBottom="8dp"/>
 
-    <TextView
-        android:id="@+id/tvIrLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
-        android:padding="8dp"
-        android:text="¿Ya tienes cuenta? Inicia sesión"
-        android:textColor="#2196F3"
-        android:textStyle="bold"/>
+        <!-- Confirmar Contraseña -->
+        <EditText
+            android:id="@+id/etConfirmarPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_confirmar_password"
+            android:inputType="textPassword"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- BTN Registrarse -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnRegistrar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_registrar"
+            android:textSize="@dimen/texto_boton"
+            android:textStyle="bold"
+            android:layout_marginBottom="@dimen/margen"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/verde"/>
+
+        <!-- Volver al Login -->
+        <TextView
+            android:id="@+id/tvIrLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/ir_login"
+            android:textColor="@color/azul"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
 
 </LinearLayout>

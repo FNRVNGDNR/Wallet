@@ -1,9 +1,5 @@
 package com.devst.misgastos.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +10,10 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.devst.misgastos.R; // Importa tu R
 import com.devst.misgastos.model.Gasto; // Importa tu modelo
@@ -31,40 +31,50 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Vistas
-    EditText etGastoId, etDescripcion, etMonto, etFecha;
-    Spinner spCategoria, spMetodoPago;
-    Button btnCreate, btnRead, btnUpdate, btnDelete, btnLogout;
-    TextView tvUsuario, tvTotal;
-    ListView lvGastos;
-
-    // ViewModels
+    //Attr
     private MainViewModel viewModel;
     private AuthViewModel authViewModel;
+    private EditText etGastoId, etDescripcion, etMonto, etFecha;
+    private Spinner spCategoria, spMetodoPago;
+    private Button btnCreate, btnRead, btnUpdate, btnDelete, btnLogout;
+    private TextView tvUsuario, tvTotal;
+    private ListView lvGastos;
 
-    // Lista que se muestra en pantalla
-    private List<Gasto> gastos = new ArrayList<>();
-    private ArrayAdapter<String> adapterLista;
+    //Adaptador de la lista (usa el toString() de Gasto)
+    private ArrayAdapter<Gasto> adapter;
 
-    // Formato de pesos chilenos: 5990 -> $5.990
+    //Formato de pesos chilenos: 5990 -> 5.990
     private final NumberFormat formatoPesos = NumberFormat.getIntegerInstance(new Locale("es", "CL"));
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main); // Asegúrate que tu layout se llame así
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
 
-        // --- 1. Obtener los ViewModel ---
+        //El viewModel se obtiene del sistema, así se conserva al girar la pantalla
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
 
-        // Si no hay sesión iniciada no se puede ver la información: volvemos al login
+        //Si no hay sesión iniciada no se puede ver la información: volvemos al login
         if (!authViewModel.haySesionActiva()) {
             irAlLogin();
             return;
         }
 
-        // --- 2. Enlazar Vistas ---
+        //Métodos para crear
+        conexionVistas();
+        configurarSpinners();
+        configurarLista();
+        observarViewModel();
+        configurarEventos();
+
+        //Cargar los gastos del usuario desde Firestore
+        viewModel.cargarGastos();
+    }
+
+    //Conexión del XML a Java
+    private void conexionVistas() {
         etGastoId = findViewById(R.id.etGastoId);
         etDescripcion = findViewById(R.id.etDescripcion);
         etMonto = findViewById(R.id.etMonto);
@@ -80,24 +90,12 @@ public class MainActivity extends AppCompatActivity {
         tvTotal = findViewById(R.id.tvTotal);
         lvGastos = findViewById(R.id.lvGastos);
 
-        tvUsuario.setText("Conectado como: " + authViewModel.getCorreoUsuario());
+        tvUsuario.setText(getString(R.string.usuario_conectado, authViewModel.getCorreoUsuario()));
         etFecha.setText(fechaDeHoy());
-
-        // --- 3. Configurar Spinners y Lista ---
-        setupSpinners();
-        setupLista();
-
-        // --- 4. Configurar Observadores (La magia de LiveData) ---
-        setupObservers();
-
-        // --- 5. Configurar Listeners de Botones ---
-        setupButtonListeners();
-
-        // --- 6. Cargar los gastos del usuario desde Firestore ---
-        viewModel.cargarGastos();
     }
 
-    private void setupSpinners() {
+    //Opciones de los Spinners (vienen de strings.xml)
+    private void configurarSpinners() {
         ArrayAdapter<CharSequence> adapterCategorias = ArrayAdapter.createFromResource(
                 this, R.array.categorias, android.R.layout.simple_spinner_item);
         adapterCategorias.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -109,19 +107,17 @@ public class MainActivity extends AppCompatActivity {
         spMetodoPago.setAdapter(adapterMetodos);
     }
 
-    private void setupLista() {
-        adapterLista = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new ArrayList<>());
-        lvGastos.setAdapter(adapterLista);
-
-        // Al tocar un gasto de la lista, se muestran sus datos en el formulario
-        lvGastos.setOnItemClickListener((parent, view, position, id) ->
-                viewModel.seleccionarGasto(gastos.get(position)));
+    //Lista de gastos
+    private void configurarLista() {
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new ArrayList<>());
+        lvGastos.setAdapter(adapter);
     }
 
-    private void setupObservers() {
+    //Observadores (La magia de LiveData)
+    private void observarViewModel() {
 
-        // Observador para el Gasto encontrado
-        final Observer<Gasto> gastoObserver = gasto -> {
+        //Gasto encontrado o seleccionado
+        viewModel.getGastoEncontrado().observe(this, gasto -> {
             if (gasto != null) {
                 // Si el gasto existe, llena los campos
                 etGastoId.setText(gasto.getId());
@@ -138,68 +134,69 @@ public class MainActivity extends AppCompatActivity {
                 spCategoria.setSelection(0);
                 spMetodoPago.setSelection(0);
             }
-        };
+        });
 
-        // Observador para la lista de gastos (se actualiza sola cuando cambia Firestore)
-        final Observer<List<Gasto>> listaObserver = lista -> {
-            gastos = lista;
-            List<String> textos = new ArrayList<>();
-            for (Gasto gasto : lista) {
-                textos.add(gasto.getId() + " | " + gasto.getDescripcion() + " | $"
-                        + formatoPesos.format(gasto.getMonto()) + "\n"
-                        + gasto.getCategoria() + " · " + gasto.getMetodoPago() + " · " + gasto.getFecha());
+        //Lista de gastos (se actualiza sola cuando cambia Firestore)
+        viewModel.getListaGastos().observe(this, gastos -> {
+            adapter.clear();
+            adapter.addAll(gastos);
+            String total = formatoPesos.format(viewModel.calcularTotal(gastos));
+            tvTotal.setText(getString(R.string.total_gastado, total, gastos.size()));
+        });
+
+        //Mensajes Toast
+        viewModel.getToastMessage().observe(this, mensaje -> {
+            if (mensaje != null) {
+                Toast.makeText(MainActivity.this, mensaje, Toast.LENGTH_SHORT).show();
             }
-            adapterLista.clear();
-            adapterLista.addAll(textos);
-            tvTotal.setText("Total gastado: $" + formatoPesos.format(viewModel.calcularTotal(lista))
-                    + " (" + lista.size() + " registros)");
-        };
-
-        // Observador para los mensajes Toast
-        final Observer<String> toastObserver = message -> {
-            Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
-        };
-
-        // Conectar los observadores a los LiveData del ViewModel
-        viewModel.getGastoEncontrado().observe(this, gastoObserver);
-        viewModel.getListaGastos().observe(this, listaObserver);
-        viewModel.getToastMessage().observe(this, toastObserver);
+        });
     }
 
-    private void setupButtonListeners() {
+    //Creamos los Eventos
+    private void configurarEventos() {
 
-        // CREATE
+        //CREATE
         btnCreate.setOnClickListener(v -> guardarDatos());
 
-        // READ
+        //READ
         btnRead.setOnClickListener(v -> {
             String id = etGastoId.getText().toString().trim();
             viewModel.buscarGasto(id);
         });
 
-        // UPDATE
+        //UPDATE
         btnUpdate.setOnClickListener(v -> guardarDatos()); // Reutiliza la misma lógica
 
-        // DELETE
+        //DELETE
         btnDelete.setOnClickListener(v -> {
             String id = etGastoId.getText().toString().trim();
             viewModel.eliminarGasto(id);
             // Los campos se limpiarán automáticamente gracias al observador
         });
 
-        // FECHA: abre un calendario para elegirla
+        //Tocar un gasto de la lista: se muestra en el formulario para editarlo
+        lvGastos.setOnItemClickListener((parent, view, position, id) ->
+                viewModel.seleccionarGasto(adapter.getItem(position)));
+
+        //Mantener presionado un gasto de la lista: se elimina
+        lvGastos.setOnItemLongClickListener((parent, view, position, id) -> {
+            viewModel.eliminarGasto(adapter.getItem(position).getId());
+            return true;
+        });
+
+        //FECHA: abre un calendario para elegirla
         etFecha.setOnClickListener(v -> mostrarCalendario());
 
-        // CERRAR SESIÓN
+        //CERRAR SESIÓN
         btnLogout.setOnClickListener(v -> {
             viewModel.detenerGastos();
             authViewModel.cerrarSesion();
-            Toast.makeText(MainActivity.this, "Sesión cerrada", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, R.string.sesion_cerrada, Toast.LENGTH_SHORT).show();
             irAlLogin();
         });
     }
 
-    // Método helper para los botones de Guardar/Actualizar
+    //Método helper para los botones de Guardar/Actualizar
     private void guardarDatos() {
         String id = etGastoId.getText().toString().trim();
         String descripcion = etDescripcion.getText().toString().trim();
@@ -211,11 +208,13 @@ public class MainActivity extends AppCompatActivity {
         viewModel.guardarGasto(id, descripcion, monto, categoria, fecha, metodoPago);
     }
 
+    //Calendario para elegir la fecha
     private void mostrarCalendario() {
         Calendar calendario = Calendar.getInstance();
-        new DatePickerDialog(this, (view, anio, mes, dia) -> {
-            etFecha.setText(String.format(Locale.getDefault(), "%02d/%02d/%04d", dia, mes + 1, anio));
-        }, calendario.get(Calendar.YEAR), calendario.get(Calendar.MONTH),
+        new DatePickerDialog(this, (view, anio, mes, dia) ->
+                etFecha.setText(String.format(Locale.getDefault(), "%02d/%02d/%04d", dia, mes + 1, anio)),
+                calendario.get(Calendar.YEAR),
+                calendario.get(Calendar.MONTH),
                 calendario.get(Calendar.DAY_OF_MONTH)).show();
     }
 
@@ -223,17 +222,19 @@ public class MainActivity extends AppCompatActivity {
         return new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
     }
 
-    // Marca en el Spinner la opción guardada en Firestore
+    //Marca en el Spinner la opción guardada en Firestore
     private void seleccionarEnSpinner(Spinner spinner, int arrayId, String valor) {
         List<String> opciones = Arrays.asList(getResources().getStringArray(arrayId));
         int posicion = opciones.indexOf(valor);
         spinner.setSelection(Math.max(posicion, 0));
     }
 
+    //Volver al login
     private void irAlLogin() {
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+        //Intent Explicito
+        Intent login = new Intent(MainActivity.this, LoginActivity.class);
+        login.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(login);
         finish();
     }
 }

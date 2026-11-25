@@ -3,6 +3,7 @@ package com.devst.misgastos.viewmodel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
 import com.devst.misgastos.model.Gasto; // Importa tu modelo
 import com.devst.misgastos.repositorio.GastoRepositorio; // Importa tu repositorio
 
@@ -13,19 +14,11 @@ import java.util.Locale;
 
 public class MainViewModel extends ViewModel {
 
-    private GastoRepositorio repository;
-
-    // LiveData para notificar a la Vista (Activity)
-    private MutableLiveData<Gasto> gastoEncontrado;
-    private MutableLiveData<List<Gasto>> listaGastos;
-    private MutableLiveData<String> toastMessage;
-
-    public MainViewModel() {
-        repository = new GastoRepositorio();
-        gastoEncontrado = new MutableLiveData<>();
-        listaGastos = new MutableLiveData<>();
-        toastMessage = new MutableLiveData<>();
-    }
+    //Attr y estados privados y modificables (solo el ViewModel los cambia)
+    private final GastoRepositorio repository = new GastoRepositorio();
+    private final MutableLiveData<Gasto> gastoEncontrado = new MutableLiveData<>();
+    private final MutableLiveData<List<Gasto>> listaGastos = new MutableLiveData<>();
+    private final MutableLiveData<String> toastMessage = new MutableLiveData<>();
 
     // --- Getters para que la Vista "observe" ---
 
@@ -41,7 +34,7 @@ public class MainViewModel extends ViewModel {
         return toastMessage;
     }
 
-    // --- Métodos que la Vista llamará (Lógica de UI) ---
+    // --- Métodos (Eventos) que vendrán como solicitud de la Vista ---
 
     public void cargarGastos() {
         repository.listenGastos(listaGastos, toastMessage);
@@ -49,10 +42,13 @@ public class MainViewModel extends ViewModel {
 
     public void guardarGasto(String id, String descripcion, String montoTexto,
                              String categoria, String fecha, String metodoPago) {
+        //Consultas de negocio (validaciones)
         if (id.isEmpty() || descripcion.isEmpty() || montoTexto.isEmpty() || fecha.isEmpty()) {
             toastMessage.setValue("Error: ID, Descripción, Monto y Fecha no pueden estar vacíos");
             return;
         }
+
+        //TRY-CATCH: el monto debe ser un número
         long monto;
         try {
             monto = Long.parseLong(montoTexto);
@@ -60,6 +56,7 @@ public class MainViewModel extends ViewModel {
             toastMessage.setValue("Error: El monto debe ser un número");
             return;
         }
+
         if (monto <= 0) {
             toastMessage.setValue("Error: El monto debe ser mayor a 0");
             return;
@@ -108,6 +105,8 @@ public class MainViewModel extends ViewModel {
     private boolean esFechaValida(String fecha) {
         SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         formato.setLenient(false);
+
+        //TRY-CATCH
         try {
             formato.parse(fecha);
             return true;

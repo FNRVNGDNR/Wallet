@@ -1,6 +1,9 @@
 package com.devst.misgastos.model;
 
+// MODELO: representa un documento de la colección "gastos" en Firestore
 public class Gasto {
+
+    //Variables
     private String id;
     private String descripcion;
     private long monto;
@@ -68,5 +71,12 @@ public class Gasto {
 
     public void setMetodoPago(String metodoPago) {
         this.metodoPago = metodoPago;
+    }
+
+    // Lo que se muestra en la lista (ListView)
+    @Override
+    public String toString() {
+        return id + " | " + descripcion + " | $" + monto + "\n"
+                + categoria + " · " + metodoPago + " · " + fecha;
     }
 }

@@ -8,6 +8,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 
+// REPOSITORIO: único lugar que habla con Firebase Authentication
 public class AuthRepositorio {
 
     private static final String TAG = "AuthRepositorio";

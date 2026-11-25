@@ -12,6 +12,7 @@ import com.devst.misgastos.model.Gasto; // Importa tu modelo
 import java.util.ArrayList;
 import java.util.List;
 
+// REPOSITORIO: único lugar que habla con Cloud Firestore
 public class GastoRepositorio {
 
     private static final String TAG = "GastoRepositorio";

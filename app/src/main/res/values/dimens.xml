@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="texto_titulo">32sp</dimen>
+    <dimen name="texto_subtitulo">20sp</dimen>
+    <dimen name="texto_boton">15sp</dimen>
+    <dimen name="texto_normal">15sp</dimen>
+    <dimen name="texto_pequeno">12sp</dimen>
+    <dimen name="margen">15dp</dimen>
+
+</resources>

@@ -1,61 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:gravity="center_vertical"
     android:orientation="vertical"
-    android:padding="24dp"
+    android:fitsSystemWindows="true"
     tools:context=".ui.LoginActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="MyWallet"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        android:layout_gravity="center_horizontal"/>
+    <!-- Estructura del diseño -->
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Iniciar Sesión"
-        android:textSize="20sp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="24dp"/>
-
-    <EditText
-        android:id="@+id/etEmail"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Correo electrónico"
-        android:inputType="textEmailAddress"
-        android:layout_marginBottom="8dp"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="24dp">
 
-    <EditText
-        android:id="@+id/etPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Contraseña"
-        android:inputType="textPassword"
-        android:layout_marginBottom="24dp"/>
+        <!-- Título de la App -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/titulo_app"
+            android:textSize="@dimen/texto_titulo"
+            android:textStyle="bold"/>
 
-    <Button
-        android:id="@+id/btnLogin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Ingresar"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/titulo_login"
+            android:textSize="@dimen/texto_subtitulo"
+            android:layout_marginBottom="24dp"/>
 
-    <TextView
-        android:id="@+id/tvIrRegistro"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
-        android:padding="8dp"
-        android:text="¿No tienes cuenta? Regístrate aquí"
-        android:textColor="#2196F3"
-        android:textStyle="bold"/>
+        <!-- Correo -->
+        <EditText
+            android:id="@+id/etEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_email"
+            android:inputType="textEmailAddress"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Contraseña -->
+        <EditText
+            android:id="@+id/etPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_password"
+            android:inputType="textPassword"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- BTN Ingresar -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_ingresar"
+            android:textSize="@dimen/texto_boton"
+            android:textStyle="bold"
+            android:layout_marginBottom="@dimen/margen"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/black"/>
+
+        <!-- Ir a Registro -->
+        <!-- Intent Explicito -->
+        <TextView
+            android:id="@+id/tvIrRegistro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/ir_registro"
+            android:textColor="@color/azul"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
 
 </LinearLayout>

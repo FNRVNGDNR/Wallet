@@ -1,6 +1,37 @@
 <resources>
     <string name="app_name">MyWallet</string>
 
+    <!-- Login -->
+    <string name="titulo_app">💰 MyWallet</string>
+    <string name="titulo_login">Iniciar Sesión</string>
+    <string name="hint_email">Correo electrónico</string>
+    <string name="hint_password">Contraseña</string>
+    <string name="btn_ingresar">🔑 Ingresar</string>
+    <string name="ir_registro">¿No tienes cuenta? Regístrate aquí</string>
+
+    <!-- Registro -->
+    <string name="titulo_registro">Crear Cuenta</string>
+    <string name="hint_password_registro">Contraseña (mínimo 6 caracteres)</string>
+    <string name="hint_confirmar_password">Confirmar contraseña</string>
+    <string name="btn_registrar">📝 Registrarse</string>
+    <string name="ir_login">¿Ya tienes cuenta? Inicia sesión</string>
+
+    <!-- Pantalla principal -->
+    <string name="titulo_main">Mis Gastos</string>
+    <string name="btn_salir">🚪 Salir</string>
+    <string name="usuario_conectado">Conectado como: %1$s</string>
+    <string name="hint_id">ID del Gasto (Ej: G001)</string>
+    <string name="hint_descripcion">Descripción (Ej: Almuerzo)</string>
+    <string name="hint_monto">Monto ($)</string>
+    <string name="hint_fecha">📅 Fecha</string>
+    <string name="btn_guardar">💾 Guardar</string>
+    <string name="btn_buscar">🔍 Buscar</string>
+    <string name="btn_actualizar">✏️ Actualizar</string>
+    <string name="btn_eliminar">🗑️ Eliminar</string>
+    <string name="total_gastado">Total gastado: $%1$s (%2$d registros)</string>
+    <string name="titulo_lista">Mis gastos (toca para editar, mantén para eliminar)</string>
+    <string name="sesion_cerrada">Sesión cerrada</string>
+
     <!-- Opciones del Spinner de categorías -->
     <string-array name="categorias">
         <item>Comida</item>
