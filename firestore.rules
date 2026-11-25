@@ -1,0 +1,34 @@
+rules_version = '2';
+
+// Reglas de seguridad de Cloud Firestore para MyWallet.
+// Copiar en: Firebase Console > Firestore Database > Reglas > Publicar
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Cada usuario solo puede leer y escribir SUS gastos: usuarios/{uid}/gastos/{gastoId}
+    match /usuarios/{uid}/gastos/{gastoId} {
+
+      // Leer y eliminar: solo si inició sesión y el UID coincide con el dueño
+      allow read, delete: if request.auth != null && request.auth.uid == uid;
+
+      // Crear y actualizar: además, los datos deben ser válidos
+      allow create, update: if request.auth != null
+                            && request.auth.uid == uid
+                            && esGastoValido(request.resource.data);
+    }
+
+    // Cualquier otra ruta queda bloqueada
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function esGastoValido(gasto) {
+      return gasto.keys().hasOnly(['id', 'descripcion', 'monto', 'categoria', 'fecha', 'metodoPago'])
+          && gasto.descripcion is string && gasto.descripcion.size() > 0
+          && gasto.monto is int && gasto.monto > 0
+          && gasto.categoria is string
+          && gasto.fecha is string
+          && gasto.metodoPago is string;
+    }
+  }
+}
