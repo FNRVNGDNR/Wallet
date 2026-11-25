@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">MyWallet</string>
+
+    <!-- Opciones del Spinner de categorías -->
+    <string-array name="categorias">
+        <item>Comida</item>
+        <item>Transporte</item>
+        <item>Hogar</item>
+        <item>Salud</item>
+        <item>Entretención</item>
+        <item>Educación</item>
+        <item>Otros</item>
+    </string-array>
+
+    <!-- Opciones del Spinner de métodos de pago -->
+    <string-array name="metodos_pago">
+        <item>Efectivo</item>
+        <item>Débito</item>
+        <item>Crédito</item>
+        <item>Transferencia</item>
+    </string-array>
+</resources>
