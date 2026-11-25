@@ -40,12 +40,31 @@ public class MainViewModel extends ViewModel {
         repository.listenGastos(listaGastos, toastMessage);
     }
 
-    public void guardarGasto(String id, String descripcion, String montoTexto,
-                             String categoria, String fecha, String metodoPago) {
+    // CREATE: valida y pide al repositorio crear el gasto
+    public void crearGasto(String id, String descripcion, String montoTexto,
+                           String categoria, String fecha, String metodoPago) {
+        Gasto gasto = validarGasto(id, descripcion, montoTexto, categoria, fecha, metodoPago);
+        if (gasto != null) {
+            repository.crearGasto(id, gasto, toastMessage);
+        }
+    }
+
+    // UPDATE: valida y pide al repositorio actualizar el gasto
+    public void actualizarGasto(String id, String descripcion, String montoTexto,
+                                String categoria, String fecha, String metodoPago) {
+        Gasto gasto = validarGasto(id, descripcion, montoTexto, categoria, fecha, metodoPago);
+        if (gasto != null) {
+            repository.actualizarGasto(id, gasto, toastMessage);
+        }
+    }
+
+    // Valida los datos del formulario. Devuelve el Gasto si son válidos o null si hay un error
+    private Gasto validarGasto(String id, String descripcion, String montoTexto,
+                               String categoria, String fecha, String metodoPago) {
         //Consultas de negocio (validaciones)
         if (id.isEmpty() || descripcion.isEmpty() || montoTexto.isEmpty() || fecha.isEmpty()) {
             toastMessage.setValue("Error: ID, Descripción, Monto y Fecha no pueden estar vacíos");
-            return;
+            return null;
         }
 
         //TRY-CATCH: el monto debe ser un número
@@ -54,19 +73,18 @@ public class MainViewModel extends ViewModel {
             monto = Long.parseLong(montoTexto);
         } catch (NumberFormatException e) {
             toastMessage.setValue("Error: El monto debe ser un número");
-            return;
+            return null;
         }
 
         if (monto <= 0) {
             toastMessage.setValue("Error: El monto debe ser mayor a 0");
-            return;
+            return null;
         }
         if (!esFechaValida(fecha)) {
             toastMessage.setValue("Error: La fecha debe tener el formato dd/mm/aaaa");
-            return;
+            return null;
         }
-        Gasto gasto = new Gasto(id, descripcion, monto, categoria, fecha, metodoPago);
-        repository.createOrUpdateGasto(id, gasto, toastMessage);
+        return new Gasto(id, descripcion, monto, categoria, fecha, metodoPago);
     }
 
     public void buscarGasto(String id) {

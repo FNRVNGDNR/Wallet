@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
     private void configurarEventos() {
 
         //CREATE
-        btnCreate.setOnClickListener(v -> guardarDatos());
+        btnCreate.setOnClickListener(v -> guardarDatos(true));
 
         //READ
         btnRead.setOnClickListener(v -> {
@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //UPDATE
-        btnUpdate.setOnClickListener(v -> guardarDatos()); // Reutiliza la misma lógica
+        btnUpdate.setOnClickListener(v -> guardarDatos(false));
 
         //DELETE
         btnDelete.setOnClickListener(v -> {
@@ -210,8 +210,8 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
-    //Método helper para los botones de Guardar/Actualizar
-    private void guardarDatos() {
+    //Método helper para los botones de Guardar (esNuevo = true) y Actualizar (esNuevo = false)
+    private void guardarDatos(boolean esNuevo) {
         String id = etGastoId.getText().toString().trim();
         String descripcion = etDescripcion.getText().toString().trim();
         String monto = etMonto.getText().toString().trim();
@@ -219,7 +219,11 @@ public class MainActivity extends AppCompatActivity {
         String categoria = spCategoria.getSelectedItem().toString();
         String metodoPago = spMetodoPago.getSelectedItem().toString();
 
-        viewModel.guardarGasto(id, descripcion, monto, categoria, fecha, metodoPago);
+        if (esNuevo) {
+            viewModel.crearGasto(id, descripcion, monto, categoria, fecha, metodoPago);
+        } else {
+            viewModel.actualizarGasto(id, descripcion, monto, categoria, fecha, metodoPago);
+        }
     }
 
     //Calendario para elegir la fecha

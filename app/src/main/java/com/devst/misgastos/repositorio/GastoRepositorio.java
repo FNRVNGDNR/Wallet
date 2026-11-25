@@ -30,16 +30,50 @@ public class GastoRepositorio {
         return db.collection(USERS_COLLECTION).document(uid).collection(COLLECTION_NAME);
     }
 
-    // CREATE / UPDATE (Firestore usa "set" para crear o sobreescribir)
-    public void createOrUpdateGasto(String id, Gasto gasto, MutableLiveData<String> toastMessage) {
-        getColeccionGastos().document(id)
-                .set(gasto)
-                .addOnSuccessListener(aVoid -> {
-                    Log.d(TAG, "Gasto guardado con ID: " + id);
-                    toastMessage.postValue("Gasto guardado exitosamente");
+    // CREATE: solo guarda si el ID NO existe (set() sobrescribiría un gasto existente)
+    public void crearGasto(String id, Gasto gasto, MutableLiveData<String> toastMessage) {
+        DocumentReference documento = getColeccionGastos().document(id);
+        documento.get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        toastMessage.postValue("Ya existe un gasto con el ID " + id + ". Usa Actualizar para modificarlo");
+                        return;
+                    }
+                    escribirGasto(documento, gasto, "Gasto guardado exitosamente", toastMessage);
                 })
                 .addOnFailureListener(e -> {
-                    Log.w(TAG, "Error al guardar gasto", e);
+                    Log.w(TAG, "Error al comprobar el ID", e);
+                    toastMessage.postValue("Error al guardar: " + e.getMessage());
+                });
+    }
+
+    // UPDATE: solo modifica si el ID SÍ existe (set() crearía un gasto nuevo)
+    public void actualizarGasto(String id, Gasto gasto, MutableLiveData<String> toastMessage) {
+        DocumentReference documento = getColeccionGastos().document(id);
+        documento.get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (!documentSnapshot.exists()) {
+                        toastMessage.postValue("No existe un gasto con el ID " + id + ". Usa Guardar para crearlo");
+                        return;
+                    }
+                    escribirGasto(documento, gasto, "Gasto actualizado exitosamente", toastMessage);
+                })
+                .addOnFailureListener(e -> {
+                    Log.w(TAG, "Error al comprobar el ID", e);
+                    toastMessage.postValue("Error al actualizar: " + e.getMessage());
+                });
+    }
+
+    // Escribe el documento en Firestore (lo usan crear y actualizar)
+    private void escribirGasto(DocumentReference documento, Gasto gasto,
+                               String mensajeExito, MutableLiveData<String> toastMessage) {
+        documento.set(gasto)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Gasto escrito con ID: " + documento.getId());
+                    toastMessage.postValue(mensajeExito);
+                })
+                .addOnFailureListener(e -> {
+                    Log.w(TAG, "Error al escribir gasto", e);
                     toastMessage.postValue("Error al guardar: " + e.getMessage());
                 });
     }
