@@ -92,15 +92,18 @@ El archivo [`firestore.rules`](firestore.rules) garantiza que:
    - **Firestore Database** → crear la base de datos y publicar el contenido de `firestore.rules` en la pestaña *Reglas*.
 5. Abrir el proyecto en Android Studio, sincronizar Gradle y ejecutar en un emulador o dispositivo con Android 12 o superior.
 
-## 📸 Capturas
+## 🎬 Video de presentación
 
-| Inicio de sesión | Registro | Gastos |
-|---|---|---|
-| ![Login](docs/capturas/login.png) | ![Registro](docs/capturas/registro.png) | ![Gastos](docs/capturas/gastos.png) |
+[![Ver video de presentación](https://img.shields.io/badge/Ver%20video-Presentaci%C3%B3n-red?logo=youtube)](https://youtu.be/4JRzlzqy3IE)
 
-| Cloud Firestore | Firebase Authentication |
-|---|---|
-| ![Firestore](docs/capturas/firestore.png) | ![Authentication](docs/capturas/authentication.png) |
+En el video se muestra:
+
+1. Registro de un usuario nuevo.
+2. Inicio de sesión.
+3. Creación, consulta, edición y eliminación de gastos.
+4. Validaciones y mensajes de error.
+5. Los datos guardados en Cloud Firestore y los usuarios en Firebase Authentication.
+6. Cierre de sesión y persistencia de los datos al volver a ingresar.
 
 ## 👤 Autor
 
