@@ -32,6 +32,12 @@
     <string name="titulo_lista">Mis gastos (toca para editar, mantén para eliminar)</string>
     <string name="sesion_cerrada">Sesión cerrada</string>
 
+    <!-- Diálogo de confirmación al eliminar -->
+    <string name="titulo_eliminar">Eliminar gasto</string>
+    <string name="mensaje_eliminar">¿Seguro que quieres eliminar el gasto %1$s? Esta acción no se puede deshacer.</string>
+    <string name="btn_confirmar_eliminar">Eliminar</string>
+    <string name="btn_cancelar">Cancelar</string>
+
     <!-- Opciones del Spinner de categorías -->
     <string-array name="categorias">
         <item>Comida</item>

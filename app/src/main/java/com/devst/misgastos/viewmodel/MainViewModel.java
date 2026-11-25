@@ -82,9 +82,8 @@ public class MainViewModel extends ViewModel {
             toastMessage.setValue("Error: Ingrese un ID para eliminar");
             return;
         }
-        // Limpiamos el LiveData del gasto para que los campos en la UI se limpien
-        gastoEncontrado.setValue(null);
-        repository.deleteGasto(id, toastMessage);
+        // El repositorio limpia el formulario solo si el gasto realmente se eliminó
+        repository.deleteGasto(id, gastoEncontrado, toastMessage);
     }
 
     // Selecciona un gasto de la lista para mostrarlo en el formulario

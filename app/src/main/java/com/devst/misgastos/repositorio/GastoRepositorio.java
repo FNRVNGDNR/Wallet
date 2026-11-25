@@ -4,6 +4,7 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -91,16 +92,29 @@ public class GastoRepositorio {
         }
     }
 
-    // DELETE
-    public void deleteGasto(String id, MutableLiveData<String> toastMessage) {
-        getColeccionGastos().document(id)
-                .delete()
-                .addOnSuccessListener(aVoid -> {
-                    Log.d(TAG, "Gasto eliminado: " + id);
-                    toastMessage.postValue("Gasto eliminado");
+    // DELETE: primero comprueba que el gasto exista, porque Firestore
+    // NO da error al borrar un documento que no existe
+    public void deleteGasto(String id, MutableLiveData<Gasto> gastoResult, MutableLiveData<String> toastMessage) {
+        DocumentReference documento = getColeccionGastos().document(id);
+        documento.get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (!documentSnapshot.exists()) {
+                        toastMessage.postValue("No existe un gasto con el ID " + id);
+                        return;
+                    }
+                    documento.delete()
+                            .addOnSuccessListener(aVoid -> {
+                                Log.d(TAG, "Gasto eliminado: " + id);
+                                gastoResult.postValue(null); // Limpia el formulario
+                                toastMessage.postValue("Gasto eliminado");
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.w(TAG, "Error al eliminar", e);
+                                toastMessage.postValue("Error al eliminar: " + e.getMessage());
+                            });
                 })
                 .addOnFailureListener(e -> {
-                    Log.w(TAG, "Error al eliminar", e);
+                    Log.w(TAG, "Error al buscar el gasto a eliminar", e);
                     toastMessage.postValue("Error al eliminar: " + e.getMessage());
                 });
     }

@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -170,17 +171,16 @@ public class MainActivity extends AppCompatActivity {
         //DELETE
         btnDelete.setOnClickListener(v -> {
             String id = etGastoId.getText().toString().trim();
-            viewModel.eliminarGasto(id);
-            // Los campos se limpiarán automáticamente gracias al observador
+            confirmarEliminacion(id);
         });
 
         //Tocar un gasto de la lista: se muestra en el formulario para editarlo
         lvGastos.setOnItemClickListener((parent, view, position, id) ->
                 viewModel.seleccionarGasto(adapter.getItem(position)));
 
-        //Mantener presionado un gasto de la lista: se elimina
+        //Mantener presionado un gasto de la lista: pide confirmación y se elimina
         lvGastos.setOnItemLongClickListener((parent, view, position, id) -> {
-            viewModel.eliminarGasto(adapter.getItem(position).getId());
+            confirmarEliminacion(adapter.getItem(position).getId());
             return true;
         });
 
@@ -194,6 +194,20 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, R.string.sesion_cerrada, Toast.LENGTH_SHORT).show();
             irAlLogin();
         });
+    }
+
+    //Pide confirmación antes de eliminar (la acción no se puede deshacer)
+    private void confirmarEliminacion(String id) {
+        if (id.isEmpty()) {
+            viewModel.eliminarGasto(id); // El ViewModel muestra el error de validación
+            return;
+        }
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.titulo_eliminar)
+                .setMessage(getString(R.string.mensaje_eliminar, id))
+                .setPositiveButton(R.string.btn_confirmar_eliminar, (dialog, which) -> viewModel.eliminarGasto(id))
+                .setNegativeButton(R.string.btn_cancelar, null)
+                .show();
     }
 
     //Método helper para los botones de Guardar/Actualizar
